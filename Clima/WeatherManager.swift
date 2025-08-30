@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import CoreLocation
+
 protocol WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManage: WeatherManager, weather: WeatherModel)
     func didFailWithError(error: Error)
@@ -21,6 +23,11 @@ struct WeatherManager {
     
     func featchWeather(cityName: String) {
         let urlString = "\(weatherURL)&q=\(cityName)"
+        preformRequest(with: urlString)
+    }
+    
+    func featchWeather(lat: CLLocationDegrees, long: CLLocationDegrees) {
+        let urlString = "\(weatherURL)&lat=\(lat)&lon=\(long)"
         preformRequest(with: urlString)
     }
 

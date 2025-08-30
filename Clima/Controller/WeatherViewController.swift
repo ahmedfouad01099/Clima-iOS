@@ -6,6 +6,7 @@
 //  Copyright © 2019 App Brewery. All rights reserved.
 //
 
+import CoreLocation
 import UIKit
 
 class WeatherViewController: UIViewController {
@@ -15,13 +16,25 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var searchTextField: UITextField!
 
     var weatherManager = WeatherManager()
+    let locationManager = CLLocationManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+        // locationManager.startUpdatingLocation() // incase you what to keep tracking the users.
+
         weatherManager.delegate = self
         searchTextField.delegate = self
     }
+    
+    @IBAction func locationPressed(_ sender: UIButton) {
+        locationManager.requestLocation()
+    }
+    
 }
+
 
 //MARK: - UITextFieldDelegate
 
@@ -52,7 +65,7 @@ extension WeatherViewController: UITextFieldDelegate {
     }
 }
 
-//MARK: - WeatherManageDelegate
+// : - WeatherManageDelegate
 
 extension WeatherViewController: WeatherManagerDelegate {
     func didUpdateWeather(
@@ -64,11 +77,34 @@ extension WeatherViewController: WeatherManagerDelegate {
             conditionImageView.image = UIImage(
                 systemName: weather.conditionName
             )
-
+            cityLabel.text = weather.cityName
         }
     }
 
     func didFailWithError(error: Error) {
         print("Error: \(error)")
+    }
+}
+
+//MARK: - CLLocationManageDelegate
+
+extension WeatherViewController: CLLocationManagerDelegate {
+    func locationManager(
+        _ manager: CLLocationManager,
+        didUpdateLocations locations: [CLLocation]
+    ) {
+        guard let location = locations.last else { return }
+        locationManager.stopUpdatingLocation()
+        let lat = location.coordinate.latitude
+        let lon = location.coordinate.longitude
+
+        weatherManager.featchWeather(lat: lat, long: lon)
+    }
+
+    func locationManager(
+        _ manager: CLLocationManager,
+        didFailWithError error: Error
+    ) {
+        print(error)
     }
 }
