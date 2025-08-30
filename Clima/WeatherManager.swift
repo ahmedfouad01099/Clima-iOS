@@ -15,7 +15,7 @@ protocol WeatherManagerDelegate {
 
 struct WeatherManager {
     let weatherURL =
-        "https://api.openweathermap.org/data/2.5/weather?q=Cairo&appid=43964ee68778487c7cd204ebe10245b3&units=metric"
+        "https://api.openweathermap.org/data/2.5/weather?appid=43964ee68778487c7cd204ebe10245b3&units=metric"
 
     var delegate: WeatherManagerDelegate?
     
@@ -44,7 +44,6 @@ struct WeatherManager {
                         delegate?.didUpdateWeather(self, weather: weather)
                     }
                     let dataString = String(data: safeData, encoding: .utf8)
-                    print(dataString as Any)
                 }
             }
 
@@ -70,7 +69,7 @@ struct WeatherManager {
                 temperature: temp
             )
 
-            print(weather.conditionName)
+            print(weather)
 
             return weather
         } catch {
